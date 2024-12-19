@@ -1,0 +1,8 @@
+- use typescript in this project.
+- limit functions etc to single actions etc.
+- use best practices for seperation of concerns.
+- use meaningful namings etc.
+- seperate concerns.
+- use hooks and actions when it makes sense.
+- we are using nextjs 15 in this project.
+- we are using MYSQL in this project.
