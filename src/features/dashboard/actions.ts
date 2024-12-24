@@ -16,6 +16,14 @@ export interface TableData {
   quantity: number;
 }
 
+interface AddItemData {
+    date: string;
+    product: string;
+    category: string;
+    price: number;
+    quantity: number;
+}
+
 const dbConfig = {
   host: process.env.DB_HOST || '54.242.194.26',
   port: parseInt(process.env.DB_PORT || '5432'),
@@ -46,7 +54,7 @@ export const getChartData = async (): Promise<ChartData[]> => {
       `SELECT category, SUM(price * quantity) AS sales FROM ${process.env.TABLE_NAME || 'items'} GROUP BY category`
     );
     await connection.end();
-
+    console.log('Chart data:', rows);
     return rows as ChartData[];
   } catch (error) {
     console.error('Database query error (getChartData):', error);
@@ -61,9 +69,24 @@ export const getTableData = async (): Promise<TableData[]> => {
       `SELECT * FROM ${process.env.TABLE_NAME || 'items'}`
     );
     await connection.end();
+    console.log('Table data:', rows);
     return rows as TableData[];
   } catch (error) {
     console.error('Database query error (getTableData):', error);
     return [];
   }
 };
+
+export const addItem = async (item: AddItemData) => {
+    try {
+      const connection = await mysql.createConnection(dbConfig);
+      await connection.execute(
+        `INSERT INTO ${process.env.TABLE_NAME || 'items'} (date, product, category, price, quantity) VALUES (?, ?, ?, ?, ?)`,
+        [item.date, item.product, item.category, item.price, item.quantity]
+      );
+      await connection.end();
+      console.log('Item added:', item);
+    } catch (error) {
+      console.error('Database query error (addItem):', error);
+    }
+  };
